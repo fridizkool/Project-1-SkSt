@@ -1,0 +1,22 @@
+truncate ITEMS;
+
+insert into ITEMS (id, volume, name) values (1, 10, 'box of screws');
+insert into ITEMS (id, volume, name) values (2, 92, 'bag of nails');
+insert into ITEMS (id, volume, name) values (3, 36, 'hammer');
+insert into ITEMS (id, volume, name) values (4, 48, 'screwdriver');
+insert into ITEMS (id, volume, name) values (5, 6, 'paintbrush');
+insert into ITEMS (id, volume, name) values (6, 67, 'roll of duct tape');
+insert into ITEMS (id, volume, name) values (7, 88, 'flashlight');
+insert into ITEMS (id, volume, name) values (8, 34, 'batteries');
+insert into ITEMS (id, volume, name) values (9, 2, 'extension cord');
+insert into ITEMS (id, volume, name) values (10, 77, 'tool box');
+insert into ITEMS (id, volume, name) values (11, 6, 'ladder');
+insert into ITEMS (id, volume, name) values (12, 96, 'bucket');
+insert into ITEMS (id, volume, name) values (13, 89, 'work gloves');
+insert into ITEMS (id, volume, name) values (14, 7, 'measuring tape');
+insert into ITEMS (id, volume, name) values (15, 79, 'pliers');
+insert into ITEMS (id, volume, name) values (16, 30, 'level');
+insert into ITEMS (id, volume, name) values (17, 54, 'safety goggles');
+insert into ITEMS (id, volume, name) values (18, 93, 'utility knife');
+insert into ITEMS (id, volume, name) values (19, 67, 'paint roller');
+insert into ITEMS (id, volume, name) values (20, 92, 'caulk gun');
