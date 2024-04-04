@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Title</title>
+    <title>Warehouse Manager</title>
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -14,94 +14,91 @@
 </head>
 
 <body class=" bg-dark-subtle">
+    <!-- Warehouse Modal -->
+    <div class="modal fade" id="warehouse-modal" tabindex="-1" aria-labelledby="warehouse-modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Create Warehouse</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="new-warehouse-form" action="#">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="new-warehouse-name" class="form-label">Warehouse name</label>
+                            <input type="text" class="form-control" name="new-warehouse-name" id="new-warehouse-name"
+                                aria-describedby="helpId" placeholder="Name" />
+                        </div>
+                        <div class="mb-3">
+                            <!--should be controlled by company auth and if admin available to select-->
+                            <label for="new-warehouse-company" class="form-label">Company</label>
+                            <input type="text" class="form-control" name="new-warehouse-company"
+                                id="new-warehouse-company" list="companylist" placeholder="Company" enabled>
+                            </input>
+                        </div>
+                        <div class="mb-3">
+                            <label for="new-warehouse-location" class="form-label">Location</label>
+                            <input type="text" class="form-control" name="new-warehouse-location"
+                                id="new-warehouse-location" aria-describedby="helpId" placeholder="Location" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="new-warehouse-item" class="form-label">Item</label>
+                            <input type="text" class="form-control" name="new-warehouse-item" id="new-warehouse-item"
+                                aria-describedby="helpId" placeholder="Item" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="new-warehouse-capacity" class="form-label">Item capacity</label>
+                            <input type="number" class="form-control" name="new-warehouse-capacity"
+                                id="new-warehouse-capacity" aria-describedby="helpId" min="0" placeholder="Capacity" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Real content -->
     <header>
-        <!-- <br> -->
-        <!-- Nav tabs -->
-        <ul class="nav nav-tabs bg-success-subtle" id="myTab" role="tablist">
+        <ul class="nav fixed-top nav-underline bg-success-subtle container-fluid d-flex mb-3" id="myTab" role="tablist">
+            <span></span> <!--pad-->
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+                    aria-expanded="false">Company</a>
+                <ul class="dropdown-menu" id="login">
+                       <!-- companies  -->
+                </ul>
+            </li>
+            <span></span>
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="list-tab" data-bs-toggle="tab" data-bs-target="#list" type="button"
-                    role="tab" aria-controls="list" aria-selected="false">
+                <button class="nav-link active" id="warehouse-list-tab" data-bs-toggle="tab"
+                    data-bs-target="#warehouse-list" type="button" role="tab" aria-controls="warehouse-list"
+                    aria-selected="false">
                     Warehouses
                 </button>
             </li>
+            <span></span>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button"
-                    role="tab" aria-controls="home" aria-selected="true">
-                    Home
+                <button class="nav-link" id="item-tab" data-bs-toggle="tab" data-bs-target="#item-list" type="button"
+                    role="tab" aria-controls="item-list" aria-selected="true" enabled>
+                    Items & Companies
                 </button>
             </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Company</a>
-                <!-- <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#">Separated link</a></li>
-                  </ul> -->
-                  <ul class="dropdown-menu" id="login">
-                    <li><a class="dropdown-item" href="#" id="admin">Admin</a></li>
-                  </ul>              
-                <!-- <button class="nav-link" id="new-warehouse-tab" data-bs-toggle="tab" data-bs-target="#new-warehouse"
-                    type="button" role="tab" aria-controls="new-warehouse" aria-selected="false">
+            <span></span>
+            <li class="nav-item d-flex ms-auto p-2" role="presentation">
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#warehouse-modal">
                     New Warehouse
-                </button> -->
+                </button>
             </li>
         </ul>
         <br>
+        <br>
         <!-- Tab panes -->
         <div class="tab-content">
-            <div class="tab-pane container text-center" id="home" role="tabpanel" aria-labelledby="home-tab">
-                <h1>Login to company</h1>
-                <div class="col-lg-12" id="login">
-
-                </div>
-            </div>
-            <div class="tab-pane" id="new-warehouse" role="tabpanel" aria-labelledby="new-warehouse-tab">
-                <h1>Create a warehouse</h1>
-                <hr>
-                <div class="row">
-                    <div class="col-lg-6">
-                        <form id="new-warehouse-form" action="#">
-                            <div class="mb-3">
-                                <label for="new-warehouse-name" class="form-label">Warehouse name</label>
-                                <input type="text" class="form-control" name="new-warehouse-name"
-                                    id="new-warehouse-name" aria-describedby="helpId" placeholder="Name" />
-                            </div>
-                            <div class="mb-3">
-                                <!--should be controlled by company auth and if admin available to select-->
-                                <label for="new-warehouse-company" class="form-label">Company</label>
-                                <select class="form-select form-select-lg" name="new-warehouse-company"
-                                    id="new-warehouse-company"
-                                    disabled><!--enabled for admin, should show the company being worked for-->
-                                    <!-- <option selected>Select one</option>
-                                        <option value="">New Delhi</option>
-                                        <option value="">Istanbul</option>
-                                        <option value="">Jakarta</option> -->
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="new-warehouse-location" class="form-label">Location</label>
-                                <input type="text" class="form-control" name="new-warehouse-location"
-                                    id="new-warehouse-location" aria-describedby="helpId" placeholder="Location" />
-                            </div>
-                            <div class="mb-3">
-                                <label for="new-warehouse-item" class="form-label">Item ID</label>
-                                <input type="number" class="form-control" name="new-warehouse-item"
-                                    id="new-warehouse-item" aria-describedby="helpId" placeholder="Item ID" />
-                            </div>
-                            <div class="mb-3">
-                                <label for="new-warehouse-capacity" class="form-label">Item capacity</label>
-                                <input type="number" class="form-control" name="new-warehouse-capacity"
-                                    id="new-warehouse-capacity" aria-describedby="helpId" placeholder="Item ID" />
-                            </div>
-
-
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="tab-pane active container text-center" id="list" role="tabpanel" aria-labelledby="list-tab">
+            <div class="tab-pane active container text-center" id="warehouse-list" role="tabpanel"
+                aria-labelledby="list-tab">
                 <div class="col-lg-12">
                     <table class="table table-secondary table-striped table-hover">
                         <thead>
@@ -112,7 +109,7 @@
                                 <th>Location</th>
                                 <th>Item</th>
                                 <th>Holding</th>
-                                <th>Capacity</th>
+                                <!-- <th>Capacity</th> -->
                             </tr>
                         </thead>
                         <tbody id="warehouse-table-body">
@@ -121,23 +118,52 @@
                     </table>
                 </div>
             </div>
-            <div class="toast-container position-fixed bottom-0 end-0 p-3">
-                <div id="toast-response" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="toast-header">
-                        <strong class="me-auto" id="toast-title"></strong>
-                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+
+            <div class="tab-pane container text-center" id="item-list" role="tabpanel" aria-labelledby="list-tab">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <table class="table table-secondary table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Volume</th>
+                                </tr>
+                            </thead>
+                            <tbody id="item-table-body">
+                                <!--js-->
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="toast-body" id="toast-info">
-                        what
+                    <div class="col-lg-6">
+                        <table class="table table-secondary table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                </tr>
+                            </thead>
+                            <tbody id="company-table-body">
+                                <!--js-->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-
     </header>
     <main>
-
-
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div id="toast-response" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto" id="toast-title"></strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body" id="toast-info">
+                    what
+                </div>
+            </div>
+        </div>
     </main>
     <footer>
         <!-- place footer here -->
