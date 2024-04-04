@@ -20,7 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {   //on load
     xhr.onreadystatechange = () => {
         if (xhr.readyState === 4) {
             let warehouses = JSON.parse(xhr.responseText);
-
             warehouses.forEach(element => {
                 addWarehouseToTable(element);
             });
@@ -49,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {   //on load
         return data.json();
     }).then((companiesJson) => {
         companiesJson.forEach(element => {
+
             allCompanies.push(element);
             addCompanyToTable(element);
         })
@@ -59,10 +59,33 @@ document.addEventListener("DOMContentLoaded", () => {   //on load
         });
 });
 
-document.getElementById("new-warehouse").addEventListener('submit', (event) => {
+document.getElementById("new-warehouse-form").addEventListener('submit', (event) => {
     event.preventDefault();
+    let input = new FormData(document.getElementById("new-warehouse-form"));
 
-    let input = new FormData(document.getElementById("new-warehouse"));
+    const capacityFixed = clamp(Number(input.get(`new-warehouse-capacity`)), 0, Number.MAX_VALUE);
+
+    let newWarehouse = {
+        name: input.get(`new-warehouse-name`),
+        company: {
+            name: document.getElementById(`new-warehouse-company`).value
+        },
+        location: input.get(`new-warehouse-location`),
+        item: {
+            name: input.get(`new-warehouse-item`)
+        },
+        holding: Number(clamp(Number(input.get(`new-warehouse-holding`)), 0, capacityFixed)),
+        capacity: Number(capacityFixed)
+    }
+
+    let warehouse = doPostWarehouse(newWarehouse);
+
+    document.getElementById("toast-title").innerText = "Warehouse Created";
+    document.getElementById("toast-info").innerText = `Warehouse ${warehouse.name} created!`;
+    toastResponse = bootstrap.Toast.getOrCreateInstance(document.getElementById('toast-response'));
+    toastResponse.show();
+    updateCompanyInTable(warehouse.company);
+    updateItemInTable(warehouse.item);
 });
 
 function setupLogin() { //create the login dropdown
@@ -81,6 +104,8 @@ function setupLogin() { //create the login dropdown
             allWarehouses = [];
             document.getElementById('warehouse-table-body').innerHTML = '';
             document.getElementById("item-tab").disabled = false;
+            document.getElementById("new-warehouse-company").disabled = false;
+            document.getElementById("new-warehouse-company").value = '';
             auth = 2;
             warehouses.forEach(element => {
                 addWarehouseToTable(element);
@@ -93,12 +118,14 @@ function setupLogin() { //create the login dropdown
     loginPage.appendChild(listItem);
 
     allCompanies.forEach((element) => {
-        const child = document.createElement("a");
+        let child = document.createElement("a");
         child.innerText = element.name;
         child.addEventListener("click", (event) => {
             login = element.id;
             auth = 0;
             document.getElementById("item-tab").disabled = true;
+            document.getElementById("new-warehouse-company").disabled = true;
+            document.getElementById("new-warehouse-company").value = element.name;
             getWarehousesByCompany(login);
         });
         child.setAttribute("class", "dropdown-item");
@@ -126,7 +153,6 @@ function getWarehousesByCompany(id) //for company search
 }
 
 function addWarehouseToTable(warehouse) {
-    console.log(warehouse);
     let row = document.createElement('tr');
     let id = document.createElement('th');
     let name = document.createElement('td');
@@ -143,8 +169,7 @@ function addWarehouseToTable(warehouse) {
     company.innerText = warehouse.company.name;
     location.innerText = warehouse.location;
     item.innerText = warehouse.item.name;
-    holding.innerText = warehouse.holding;
-    capacity.innerText = warehouse.capacity;
+    holding.innerText = (warehouse.holding * warehouse.item.volume) + "/" + (warehouse.capacity * warehouse.item.volume);
 
     //init collapsable
     row.setAttribute('id', "row" + warehouse.id);
@@ -160,7 +185,7 @@ function addWarehouseToTable(warehouse) {
     row.appendChild(location);
     row.appendChild(item);
     row.appendChild(holding);
-    row.appendChild(capacity);
+    // row.appendChild(capacity);
 
     document.getElementById('warehouse-table-body').appendChild(row);
     document.getElementById('warehouse-table-body').appendChild(collapse);
@@ -173,14 +198,23 @@ function makeCollapseWarehouse(warehouse) {
     let td = document.createElement('td');
     let wrapper = document.createElement('div');
     let form = document.createElement('form');
+
     let update = document.createElement('button');
     let del = document.createElement('button');
+
     let nameIn = document.createElement('input');
     let companyIn = document.createElement('input');
     let locationIn = document.createElement('input');
     let itemIn = document.createElement('input');
     let holdingIn = document.createElement('input');
     let capacityIn = document.createElement('input');
+
+    let nameLabel = document.createElement("label");
+    let companyLabel = document.createElement("label");
+    let locationLabel = document.createElement("label");
+    let itemLabel = document.createElement("label");
+    let holdingLabel = document.createElement("label");
+    let capacityLabel = document.createElement("label");
 
     wrapper.setAttribute("id", "collapse" + warehouse.id);
     wrapper.setAttribute("class", "collapse");
@@ -223,6 +257,9 @@ function makeCollapseWarehouse(warehouse) {
     nameIn.setAttribute('value', warehouse.name);
     nameIn = giveNameId(nameIn, `update-name-${warehouse.id}`);
     nameIn.setAttribute('class', 'form-control');
+    nameLabel.setAttribute('for', `update-name-${warehouse.id}`);
+    nameLabel.setAttribute('class', `form-label`);
+    nameLabel.innerText = "Warehouse name";
 
     companyIn.setAttribute('type', 'text');
     companyIn.setAttribute('list', 'companylist')
@@ -231,17 +268,26 @@ function makeCollapseWarehouse(warehouse) {
     companyIn.setAttribute('value', warehouse.company.name);
     companyIn = giveNameId(companyIn, `update-company-${warehouse.id}`);
     companyIn.setAttribute('class', 'form-control');
+    companyLabel.setAttribute('for', `update-company-${warehouse.id}`);
+    companyLabel.setAttribute('class', `form-label`);
+    companyLabel.innerText = 'Company name';
 
     locationIn.setAttribute('type', 'text');
     locationIn.setAttribute('value', warehouse.location);
     locationIn = giveNameId(locationIn, `update-location-${warehouse.id}`);
     locationIn.setAttribute('class', 'form-control');
+    locationLabel.setAttribute('for', `update-location-${warehouse.id}`);
+    locationLabel.setAttribute('class', `form-label`);
+    locationLabel.innerText = 'Location';
 
     itemIn.setAttribute('type', 'text');
     itemIn.setAttribute('list', 'itemlist');
     itemIn.setAttribute('value', warehouse.item.name);
     itemIn = giveNameId(itemIn, `update-item-${warehouse.id}`);
     itemIn.setAttribute('class', 'form-control');
+    itemLabel.setAttribute('for', `update-item-${warehouse.id}`);
+    itemLabel.setAttribute('class', `form-label`);
+    itemLabel.innerText = 'Item name';
 
     holdingIn.setAttribute('type', 'number');
     holdingIn.setAttribute('min', '0');
@@ -249,24 +295,36 @@ function makeCollapseWarehouse(warehouse) {
     holdingIn.setAttribute('value', warehouse.holding);
     holdingIn = giveNameId(holdingIn, `update-holding-${warehouse.id}`);
     holdingIn.setAttribute('class', 'form-control');
+    holdingLabel.setAttribute('for', `update-holding-${warehouse.id}`);
+    holdingLabel.setAttribute('class', `form-label`);
+    holdingLabel.innerText = 'Item amount';
 
     capacityIn.setAttribute('type', 'number');
     capacityIn.setAttribute('value', warehouse.capacity);
     capacityIn = giveNameId(capacityIn, `update-capacity-${warehouse.id}`);
     capacityIn.setAttribute('class', 'form-control');
+    capacityLabel.setAttribute('for', `update-capacity-${warehouse.id}`);
+    capacityLabel.setAttribute('class', `form-label`);
+    capacityLabel.innerText = 'Maximum item capacity';
 
+    form.appendChild(nameLabel);
     form.appendChild(nameIn);
-    form.appendChild(br());
+    // form.appendChild(br());
+    form.appendChild(companyLabel);
     form.appendChild(companyIn);
-    form.appendChild(br());
+    // form.appendChild(br());
+    form.appendChild(locationLabel);
     form.appendChild(locationIn);
-    form.appendChild(br());
+    // form.appendChild(br());
+    form.appendChild(itemLabel);
     form.appendChild(itemIn);
-    form.appendChild(br());
+    // form.appendChild(br());
+    form.appendChild(holdingLabel);
     form.appendChild(holdingIn);
-    form.appendChild(br());
+    // form.appendChild(br());
+    form.appendChild(capacityLabel);
     form.appendChild(capacityIn);
-    form.appendChild(br());
+    // form.appendChild(br());
     form.appendChild(update);
     form.appendChild(del);
 
@@ -292,7 +350,6 @@ function makeCollapseWarehouse(warehouse) {
             holding: Number(clamp(Number(input.get(`update-holding-${id}`)), 0, capacityFixed)),
             capacity: Number(capacityFixed)
         }
-        console.log(JSON.stringify(newWarehouse));
         fetch(`${URL}/warehouses/warehouse/update?id=${id}`, {
             method: 'PUT',
             headers: {
@@ -304,7 +361,6 @@ function makeCollapseWarehouse(warehouse) {
                 return data.json();
             })
             .then((warehouseJson) => {
-                console.log(warehouseJson);
                 updateWarehouseInTable(warehouseJson);
             })
             .catch(error => console.error(error));
@@ -351,6 +407,8 @@ async function doPostWarehouse(newWarehouse) {
     addWarehouseToTable(warehouse);
 
     document.getElementById('new-warehouse-form').reset();
+
+    return warehouse;
 }
 
 function updateWarehouseInTable(warehouse) {
@@ -530,7 +588,6 @@ function makeCollapseItem(item) {
                 return data.json();
             })
             .then((itemJson) => {
-                console.log(itemJson);
                 updateItemInTable(itemJson);
             })
             .catch(error => console.error(error));
@@ -698,7 +755,6 @@ function makeCollapseComany(company) {
                 return data.json();
             })
             .then((companyJson) => {
-                console.log(companyJson);
                 updateCompanyInTable(companyJson);
             })
             .catch(error => console.error(error));
@@ -715,7 +771,7 @@ function makeCollapseComany(company) {
 
 function updateCompanyInTable(company) {
     if (allCompanies.find(element => element.name === company.name) === undefined) {
-        allCompanies.push(company.item);
+        allCompanies.push(company);
         let datalist = document.getElementById('companylist');
         const child = document.createElement('option');
         child.setAttribute('value', company.name);
@@ -751,5 +807,33 @@ function updateCompanyInTable(company) {
             addWarehouseToTable(element);
             allWarehouses.push(element);
         });
+    }).then(() => {
+        fetch(URL + '/companies', {     //create a datalist for companies
+            method: 'GET'
+        }).then((data) => {
+            return data.json();
+        }).then((companiesJson) => {
+            companiesJson.forEach(element => {
+                allCompanies.push(element);
+                addCompanyToTable(element);
+            })
+            document.body.appendChild(makeOptionsName(allCompanies, 'companylist'));
+        })
+            .then(() => {
+                fetch(URL + '/companies', {     //create a datalist for companies
+                    method: 'GET'
+                }).then((data) => {
+                    return data.json();
+                }).then((companiesJson) => {
+                    companiesJson.forEach(element => {
+                        allCompanies.push(element);
+                        addCompanyToTable(element);
+                    })
+                    document.body.appendChild(makeOptionsName(allCompanies, 'companylist'));
+                })
+                    .then(() => {
+                        setupLogin();   //make the auth bar
+                    });
+            });
     });
 }
