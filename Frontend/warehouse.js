@@ -82,6 +82,31 @@ document.getElementById("new-warehouse-form").addEventListener('submit', (event)
 
 });
 
+document.getElementById("new-item-form").addEventListener('submit', (event) => {
+    event.preventDefault();
+    let input = new FormData(document.getElementById("new-item-form"));
+
+    const volumeFixed = clamp(Number(input.get(`new-item-volume`)), 1, Number.MAX_VALUE);
+
+    let newItem = {
+        name: input.get(`new-item-name`),
+        volume: Number(volumeFixed)
+    }
+
+    doPostItem(newItem);
+});
+
+document.getElementById("new-company-form").addEventListener('submit', (event) => {
+    event.preventDefault();
+    let input = new FormData(document.getElementById("new-company-form"));
+
+    let newCompany = {
+        name: input.get(`new-company-name`),
+    }
+
+    doPostCompany(newCompany);
+});
+
 function setupLogin() { //create the login dropdown
     let loginPage = document.getElementById("login");
     loginPage.innerHTML = '';
@@ -601,6 +626,30 @@ function makeCollapseItem(item) {
     return tr;
 }
 
+function doPostItem(newItem) {
+    console.log('hi');
+    fetch(URL + '/items/item', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newItem)
+    })
+    .then(returned => returned.json())
+    .then(item => {
+
+        addItemToTable(item);
+
+        document.getElementById('new-item-form').reset();
+
+        document.getElementById("toast-title").innerText = "Item Created";
+        document.getElementById("toast-info").innerText = `Item ${item.name} created!`;
+        toastResponse = bootstrap.Toast.getOrCreateInstance(document.getElementById('toast-response'));
+        toastResponse.show();
+        // updateItemInTable(item);
+    });
+}
+
 function updateItemInTable(item) {
     if (allItems.find(element => element.name === item.name) === undefined) {
         document.getElementById("toast-title").innerText = "Item Created";
@@ -760,6 +809,28 @@ function makeCollapseComany(company) {
     tr.append(td);
 
     return tr;
+}
+
+function doPostCompany(newCompany) {
+    fetch(URL + '/companies/company', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newCompany)
+    })
+    .then(returned => returned.json())
+    .then(company => {
+
+        addCompanyToTable(company);
+
+        document.getElementById('new-company-form').reset();
+
+        document.getElementById("toast-title").innerText = "Company Created";
+        document.getElementById("toast-info").innerText = `Company ${company.name} created!`;
+        toastResponse = bootstrap.Toast.getOrCreateInstance(document.getElementById('toast-response'));
+        toastResponse.show();
+    });
 }
 
 function updateCompanyInTable(company) {

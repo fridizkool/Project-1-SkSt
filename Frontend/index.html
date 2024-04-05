@@ -60,6 +60,59 @@
         </div>
     </div>
 
+    <div class="modal fade" id="item-modal" tabindex="-1" aria-labelledby="item-modal" aria-hidden="true">
+        <!--item modal-->
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success-subtle">
+                    <h1 class="modal-title fs-5" id="itemmodallabel">Create Item</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="new-item-form" action="#">
+                    <div class="modal-body bg-dark-subtle">
+                        <div class="mb-3">
+                            <label for="new-item-name" class="form-label">Item name</label>
+                            <input type="text" class="form-control" name="new-item-name" id="new-item-name"
+                                aria-describedby="helpId" placeholder="Name" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="new-item-volume" class="form-label">Item capacity</label>
+                            <input type="number" class="form-control" name="new-item-volume" id="new-item-volume"
+                                aria-describedby="helpId" min="1" placeholder="Volume" />
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-success-subtle">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="company-modal" tabindex="-1" aria-labelledby="company-modal" aria-hidden="true">
+        <!--company modal-->
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success-subtle">
+                    <h1 class="modal-title fs-5" id="examplabel">Create Company</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="new-company-form" action="#">
+                    <div class="modal-body bg-dark-subtle">
+                        <div class="mb-3">
+                            <label for="new-company-name" class="form-label">Company name</label>
+                            <input type="text" class="form-control" name="new-company-name" id="new-company-name"
+                                aria-describedby="helpId" placeholder="Name" />
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-success-subtle">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Real content -->
     <header>
         <ul class="nav fixed-top nav-underline bg-success-subtle container-fluid d-flex mb-3" id="myTab" role="tablist">
@@ -68,7 +121,7 @@
                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
                     aria-expanded="false">Company</a>
                 <ul class="dropdown-menu" id="login">
-                       <!-- companies  -->
+                    <!-- companies  -->
                 </ul>
             </li>
             <span></span>
@@ -87,10 +140,31 @@
                 </button>
             </li>
             <span></span>
+
             <li class="nav-item d-flex ms-auto p-2" role="presentation">
-                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#warehouse-modal">
-                    New Warehouse
-                </button>
+                <a class="dropdown-toggle btn btn-outline-primary" data-bs-toggle="dropdown" href="#" role="button"
+                    aria-expanded="false">Add</a>
+                <ul class="dropdown-menu text-center dropdown-menu-end" id="create-list">
+                    <li>
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                            data-bs-target="#warehouse-modal">
+                            New Warehouse
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" id="company-button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                            data-bs-target="#company-modal" enabled>
+                            New Company
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" id="item-button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                            data-bs-target="#item-modal" enabled>
+                            New Item
+                        </button>
+                    </li>
+                    <!-- companies  -->
+                </ul>
             </li>
         </ul>
         <br>
