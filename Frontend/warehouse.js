@@ -48,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {   //on load
         return data.json();
     }).then((companiesJson) => {
         companiesJson.forEach(element => {
-
             allCompanies.push(element);
             addCompanyToTable(element);
         })
@@ -78,14 +77,9 @@ document.getElementById("new-warehouse-form").addEventListener('submit', (event)
         capacity: Number(capacityFixed)
     }
 
-    let warehouse = doPostWarehouse(newWarehouse);
+    doPostWarehouse(newWarehouse);
 
-    document.getElementById("toast-title").innerText = "Warehouse Created";
-    document.getElementById("toast-info").innerText = `Warehouse ${warehouse.name} created!`;
-    toastResponse = bootstrap.Toast.getOrCreateInstance(document.getElementById('toast-response'));
-    toastResponse.show();
-    updateCompanyInTable(warehouse.company);
-    updateItemInTable(warehouse.item);
+
 });
 
 function setupLogin() { //create the login dropdown
@@ -169,7 +163,8 @@ function addWarehouseToTable(warehouse) {
     company.innerText = warehouse.company.name;
     location.innerText = warehouse.location;
     item.innerText = warehouse.item.name;
-    holding.innerText = (warehouse.holding * warehouse.item.volume) + "/" + (warehouse.capacity * warehouse.item.volume);
+    holding.innerText = warehouse.holding;
+    capacity.innerText = warehouse.capacity;
 
     //init collapsable
     row.setAttribute('id', "row" + warehouse.id);
@@ -185,7 +180,7 @@ function addWarehouseToTable(warehouse) {
     row.appendChild(location);
     row.appendChild(item);
     row.appendChild(holding);
-    // row.appendChild(capacity);
+    row.appendChild(capacity);
 
     document.getElementById('warehouse-table-body').appendChild(row);
     document.getElementById('warehouse-table-body').appendChild(collapse);
@@ -393,22 +388,28 @@ function giveNameId(element, name)  //shortcut to give inputs their name and ids
     return element;
 }
 
-async function doPostWarehouse(newWarehouse) {
-    let returned = await fetch(URL + '/warehouses/warehouse', {
+function doPostWarehouse(newWarehouse) {
+    fetch(URL + '/warehouses/warehouse', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(newWarehouse)
+    })
+    .then(returned => returned.json())
+    .then(warehouse => {
+
+        addWarehouseToTable(warehouse);
+
+        document.getElementById('new-warehouse-form').reset();
+
+        document.getElementById("toast-title").innerText = "Warehouse Created";
+        document.getElementById("toast-info").innerText = `Warehouse ${warehouse.name} created!`;
+        toastResponse = bootstrap.Toast.getOrCreateInstance(document.getElementById('toast-response'));
+        toastResponse.show();
+        updateCompanyInTable(warehouse.company);
+        updateItemInTable(warehouse.item);
     });
-
-    let warehouse = await returned.json();
-
-    addWarehouseToTable(warehouse);
-
-    document.getElementById('new-warehouse-form').reset();
-
-    return warehouse;
 }
 
 function updateWarehouseInTable(warehouse) {
@@ -494,8 +495,6 @@ function addItemToTable(item) {
 
     document.getElementById('item-table-body').appendChild(row);
     document.getElementById('item-table-body').appendChild(collapse);
-
-    allItems.push(item);
 }
 
 function makeCollapseItem(item) {
@@ -604,12 +603,6 @@ function makeCollapseItem(item) {
 
 function updateItemInTable(item) {
     if (allItems.find(element => element.name === item.name) === undefined) {
-        allItems.push(item.item);
-        let datalist = document.getElementById('itemlist');
-        const child = document.createElement('option');
-        child.setAttribute('value', item.name);
-        datalist.appendChild(child);
-
         document.getElementById("toast-title").innerText = "Item Created";
         document.getElementById("toast-info").innerText = `Item ${item.name} created!`;
         toastResponse = bootstrap.Toast.getOrCreateInstance(document.getElementById('toast-response'));
@@ -770,12 +763,31 @@ function makeCollapseComany(company) {
 }
 
 function updateCompanyInTable(company) {
-    if (allCompanies.find(element => element.name === company.name) === undefined) {
+    if (allCompanies.find(element => element.name === company.name) === undefined) {    //new company
         allCompanies.push(company);
-        let datalist = document.getElementById('companylist');
+        let datalist = document.getElementById('companylist');  //add to data
         const child = document.createElement('option');
         child.setAttribute('value', company.name);
         datalist.appendChild(child);
+
+        // let logins = document.getElementById('login');  //update company logins
+        // let newLogin = document.createElement("a");
+        // newLogin.innerText = element.name;
+        // newLogin.addEventListener("click", (event) => {
+        //     login = element.id;
+        //     auth = 0;
+        //     document.getElementById("item-tab").disabled = true;
+        //     document.getElementById("new-warehouse-company").disabled = true;
+        //     document.getElementById("new-warehouse-company").value = element.name;
+        //     getWarehousesByCompany(login);
+        // });
+        // newLogin.setAttribute("class", "dropdown-item");
+        // newLogin.setAttribute("href", "#");
+        // const listItem = document.createElement('li');
+        // listItem.appendChild(childLogin);
+        // logins.appendChild(listItem);
+
+        // addCompanyToTable(company);
 
         document.getElementById("toast-title").innerText = "Company Created";
         document.getElementById("toast-info").innerText = `Company ${company.name} created!`;
@@ -807,33 +819,5 @@ function updateCompanyInTable(company) {
             addWarehouseToTable(element);
             allWarehouses.push(element);
         });
-    }).then(() => {
-        fetch(URL + '/companies', {     //create a datalist for companies
-            method: 'GET'
-        }).then((data) => {
-            return data.json();
-        }).then((companiesJson) => {
-            companiesJson.forEach(element => {
-                allCompanies.push(element);
-                addCompanyToTable(element);
-            })
-            document.body.appendChild(makeOptionsName(allCompanies, 'companylist'));
-        })
-            .then(() => {
-                fetch(URL + '/companies', {     //create a datalist for companies
-                    method: 'GET'
-                }).then((data) => {
-                    return data.json();
-                }).then((companiesJson) => {
-                    companiesJson.forEach(element => {
-                        allCompanies.push(element);
-                        addCompanyToTable(element);
-                    })
-                    document.body.appendChild(makeOptionsName(allCompanies, 'companylist'));
-                })
-                    .then(() => {
-                        setupLogin();   //make the auth bar
-                    });
-            });
     });
 }

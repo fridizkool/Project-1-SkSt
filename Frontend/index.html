@@ -18,12 +18,12 @@
     <div class="modal fade" id="warehouse-modal" tabindex="-1" aria-labelledby="warehouse-modal" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-success-subtle">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Create Warehouse</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="new-warehouse-form" action="#">
-                    <div class="modal-body">
+                    <div class="modal-body bg-dark-subtle">
                         <div class="mb-3">
                             <label for="new-warehouse-name" class="form-label">Warehouse name</label>
                             <input type="text" class="form-control" name="new-warehouse-name" id="new-warehouse-name"
@@ -44,7 +44,7 @@
                         <div class="mb-3">
                             <label for="new-warehouse-item" class="form-label">Item</label>
                             <input type="text" class="form-control" name="new-warehouse-item" id="new-warehouse-item"
-                                aria-describedby="helpId" placeholder="Item" />
+                                aria-describedby="helpId" list="itemlist" placeholder="Item" />
                         </div>
                         <div class="mb-3">
                             <label for="new-warehouse-capacity" class="form-label">Item capacity</label>
@@ -52,7 +52,7 @@
                                 id="new-warehouse-capacity" aria-describedby="helpId" min="0" placeholder="Capacity" />
                         </div>
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer bg-success-subtle">
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
                 </form>
@@ -109,7 +109,7 @@
                                 <th>Location</th>
                                 <th>Item</th>
                                 <th>Holding</th>
-                                <!-- <th>Capacity</th> -->
+                                <th>Capacity</th>
                             </tr>
                         </thead>
                         <tbody id="warehouse-table-body">
